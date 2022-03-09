@@ -6,13 +6,13 @@ from mysql.connector import errorcode
 # Read csv files
 shows = pd.read_csv('./shows.csv', delimiter=',')
 streaming_service = pd.read_csv('./streaming_service.csv', delimiter=',')
-streams_on = pd.read_csv('./streams_error.csv', delimiter=',')
+streams_on = pd.read_csv('./streams_on.csv', delimiter=',')
 
 shows = shows.replace(np.nan, None)
 streaming_service = streaming_service.replace(np.nan, None)
 df = pd.DataFrame(streams_on)
-df = df.astype({"movie_ID":"int","streaming_ID":"int"})
-streams_on = streams_on.replace(np.nan, None)
+df = df.astype({"movie_ID":"str","streaming_ID":"str"})
+streams_on = df.replace(np.nan, None)
 
 # Create tuples by row
 shows_tuples = [tuple(row) for row in shows.values]
@@ -44,7 +44,7 @@ def create_database(cursor, DB_NAME):
 def create_table_shows(cursor):
     create_shows = (
     "CREATE TABLE `shows`("
-    " `ID` int(20) NOT NULL,"
+    " `ID` varchar(255) NOT NULL,"
     " `title` varchar(255) NULL,"
     " `year` varchar(255) NULL,"
     " `age` varchar(255) NULL,"
@@ -79,7 +79,7 @@ def add_shows_to_db(cursor):
 def create_table_streaming_service(cursor):
     create_service = (
     "CREATE TABLE `streaming_services`("
-    " `ID` int(20) NOT NULL,"
+    " `ID` varchar(255) NOT NULL,"
     " `streaming_service` varchar(255) NULL,"
     " PRIMARY KEY (ID))")
     try:
@@ -108,9 +108,10 @@ def add_services_to_db(cursor):
 def create_table_streams_on(cursor):
     create_streams = (
     "CREATE TABLE `streams_on`("
-    " `movie_ID` int(20) NOT NULL,"
-    " `streaming_ID` int(20) NOT NULL,"
-    " PRIMARY KEY (movie_ID))")
+    " `movie_ID` varchar(255) NOT NULL,"
+    " `streaming_ID` varchar(255) NOT NULL,"
+    " FOREIGN KEY (movie_ID) REFERENCES shows(ID), "
+    " FOREIGN KEY (streaming_ID) REFERENCES streaming_services(ID))")
     try:
         print("Creating table streams_on: ")
         cursor.execute(create_streams)
@@ -124,7 +125,6 @@ def create_table_streams_on(cursor):
         
 # add streaming to the db table
 def add_streams_to_db(cursor):
-    print('hej')
     for stream in streams_on_tuples:
         sql = ("INSERT INTO streams_on "
                "(movie_ID, streaming_ID) "
