@@ -9,10 +9,12 @@ streaming_service = pd.read_csv('./streaming_service.csv', delimiter=',')
 streams_on = pd.read_csv('./streams_on.csv', delimiter=',')
 
 shows = shows.replace(np.nan, None)
+shows['imdb'] = shows['imdb'].map(lambda x: x.replace('/10', '') if x is not None else x)
+shows['rotten_tomatoes'] = shows['rotten_tomatoes'].map(lambda x: x.replace('/100', '') if x is not None else x)
 streaming_service = streaming_service.replace(np.nan, None)
 df = pd.DataFrame(streams_on)
 df = df.astype({"movie_ID":"str","streaming_ID":"str"})
-streams_on = df.replace(np.nan, None)
+streams_on = df.replace(np.nan, None) 
 
 # Create tuples by row
 shows_tuples = [tuple(row) for row in shows.values]
@@ -48,8 +50,8 @@ def create_table_shows(cursor):
     " `title` varchar(255) NULL,"
     " `year` varchar(255) NULL,"
     " `age` varchar(255) NULL,"
-    " `imdb` varchar(255) NULL,"
-    " `rotten_tomatoes` varchar(255) NULL,"
+    " `imdb` float(3) NULL,"
+    " `rotten_tomatoes` int(3) NULL,"
     " PRIMARY KEY (ID))")
     try:
         print("Creating table shows: ")
