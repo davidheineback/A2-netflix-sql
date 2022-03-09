@@ -50,7 +50,7 @@ def create_table_shows(cursor):
     " `title` varchar(255) NULL,"
     " `year` varchar(255) NULL,"
     " `age` varchar(255) NULL,"
-    " `imdb` float(3) NULL,"
+    " `imdb` DECIMAL(2,1) NULL,"
     " `rotten_tomatoes` int(3) NULL,"
     " PRIMARY KEY (ID))")
     try:
