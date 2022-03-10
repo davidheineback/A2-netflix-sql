@@ -239,19 +239,6 @@ def search_age_year(cursor):
   except:
     print("Please enter a number as integer")
     search_age_year(cursor)
-    
-    
-      
-
-# SELECT *
-# FROM shows
-# WHERE age = '18+'
-# ORDER BY title asc;
-
-# SELECT *
-# FROM shows
-# WHERE age = '18+' AND year >= 2019
-# ORDER BY title asc;
 
 
 # handle the menu selections
