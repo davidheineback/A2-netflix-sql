@@ -1,3 +1,4 @@
+import view
 import pandas as pd
 import numpy as np
 import mysql.connector as my_sql
@@ -140,6 +141,7 @@ def add_streams_to_db(cursor):
 # run the sequence and create the DB if not existing
 try:
     cursor.execute("USE {}".format(DB_NAME))
+    view.handle_menu(cursor)
 except my_sql.Error as err:
     if err.errno == errorcode.ER_BAD_DB_ERROR:
         print("Database {} does not exist".format(DB_NAME))
@@ -154,6 +156,7 @@ except my_sql.Error as err:
         create_table_streams_on(cursor)
         add_streams_to_db(cursor)
         connection.commit()
+        view.handle_menu(cursor)
     else:
         print(err)
 
