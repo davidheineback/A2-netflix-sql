@@ -12,11 +12,15 @@ def handle_input(choise):
 
 # Print out the menu list     
 def print_menu():
-    print("\n1 - List all Shows.")
-    print("2 - Filter shows by imdb rating.")
-    print("3 - Filter shows by rotten tomatoes rating.")
-    # print("4 - Show disered climate for given species.")
-    # print("5 - Show average lifespan for all species classification.")
+    print("\n1 - Show data for specified title.")
+    print("2 - Show streaming service for specified title.")
+    print("3 - Filter by age limit")
+    print("4 - Filter by release year")
+    print("5 - Filter by age limit and release year")
+    print("6 - Filter shows by imdb rating.")
+    print("7 - Filter shows by rotten tomatoes rating.")
+    print("8 - List all Shows.")
+    print("9 - Show average rating per streaming service")
     print("0 - Exit")
     
 def list_all_shows(cursor):
@@ -34,7 +38,7 @@ def list_all_shows(cursor):
             "imdb /10",
             "rotten tomatoes /100"
     ))
-  print('-'*80)
+  print('-'*150)
   for show in result:
       show = list(show)[1:]
       show = [str(x) for x in show]
@@ -83,6 +87,172 @@ def search_tomatoe_rating(cursor):
   except:
     print("Please enter a number as integer")
     search_tomatoe_rating(cursor)
+    
+def search_show_data(cursor):
+    try:
+      title = str(input("Title: "))
+      query = ''' SELECT *
+                  FROM shows
+                  WHERE title = '{}'
+                  ORDER BY title asc;
+              '''.format(title)
+      cursor.execute(query)
+      result = cursor.fetchall()
+      print_schema = "{:<75}| {:<20} | {:<10} | {:<10} | {} "
+      print(print_schema.format(
+                "Title",
+                "Released (Year)",
+                "Age limit",
+                "imdb /10",
+                "rotten tomatoes /100"
+        ))
+      print('-'*150)
+      for show in result:
+          show = list(show)[1:]
+          show = [str(x) for x in show]
+          print(print_schema.format(*show))
+    except:
+      print("Please enter a title as string")
+      search_show_data(cursor)
+    
+def search_show(cursor):
+  try:
+    title = str(input("Title: "))
+    query = ''' SELECT title, streaming_services.streaming_service as streaming_on
+                FROM shows
+                JOIN streams_on ON movie_ID = shows.ID
+                JOIN streaming_services ON streaming_services.ID = streams_on.streaming_ID
+                WHERE title = '{}'
+                ORDER BY title asc
+            '''.format(title)
+    cursor.execute(query)
+    result = cursor.fetchall()
+    print_schema = "{:<75}| {}  "
+    print(print_schema.format(
+              "Title",
+              "Streaming on"
+      ))
+    for show in result:
+      show = [str(x) for x in show]
+      print(print_schema.format(*show))
+  except:
+    print("Please enter a title as string")
+    search_show(cursor)
+
+def average_rating(cursor):
+    query = ''' SELECT streaming_service, ROUND(AVG(imdb),2), ROUND(AVG(rotten_tomatoes),2)
+                FROM shows, streaming_services
+                JOIN streams_on ON streaming_services.ID = streams_on.streaming_ID
+                WHERE shows.ID = streams_on.movie_ID
+                GROUP BY streaming_service
+            '''
+    cursor.execute(query)
+    result = cursor.fetchall()
+    print_schema = "{:<20}| {:<20}| {}  "
+    print(print_schema.format(
+              "Streaming Service",
+              "Average Rating imdb",
+              "Average Rating rotten tomatoes",
+      ))
+    for show in result:
+      show = [str(x) for x in show]
+      print(print_schema.format(*show))
+      
+def search_release_year(cursor):
+  try:
+    year = int(input("Release year: "))
+    query = ''' SELECT *
+                FROM shows
+                WHERE year >= {}
+                ORDER BY year asc;
+            '''.format(year)
+    cursor.execute(query)
+    result = cursor.fetchall()
+    print_schema = "{:<75}| {:<20} | {:<10} | {:<10} | {} "
+    print(print_schema.format(
+              "Title",
+              "Released (Year)",
+              "Age limit",
+              "imdb /10",
+              "rotten tomatoes /100"
+      ))
+    print('-'*150)
+    for show in result:
+        show = list(show)[1:]
+        show = [str(x) for x in show]
+        print(print_schema.format(*show))
+  except:
+    print("Please enter a number as integer")
+    search_release_year(cursor)
+
+def search_age_limit(cursor):
+  try:
+    age = str(input("Age limit: "))
+    query = ''' SELECT *
+                FROM shows
+                WHERE age = '{}+'
+                ORDER BY title asc;
+            '''.format(age)
+    cursor.execute(query)
+    result = cursor.fetchall()
+    print_schema = "{:<75}| {:<20} | {:<10} | {:<10} | {} "
+    print(print_schema.format(
+              "Title",
+              "Released (Year)",
+              "Age limit",
+              "imdb /10",
+              "rotten tomatoes /100"
+      ))
+    print('-'*150)
+    for show in result:
+        show = list(show)[1:]
+        show = [str(x) for x in show]
+        print(print_schema.format(*show))
+  except:
+    print("Please enter a number as integer")
+    search_age_limit(cursor)
+    
+def search_age_year(cursor):
+  try:
+    age = str(input("Age limit: "))
+    year = int(input("Release year: "))
+    query = ''' SELECT *
+                FROM shows
+                WHERE age = '{}+' AND year >= {} 
+                ORDER BY year asc;
+            '''.format(age, year)
+    cursor.execute(query)
+    result = cursor.fetchall()
+    print_schema = "{:<75}| {:<20} | {:<10} | {:<10} | {} "
+    print(print_schema.format(
+              "Title",
+              "Released (Year)",
+              "Age limit",
+              "imdb /10",
+              "rotten tomatoes /100"
+      ))
+    print('-'*150)
+    for show in result:
+        show = list(show)[1:]
+        show = [str(x) for x in show]
+        print(print_schema.format(*show))
+  except:
+    print("Please enter a number as integer")
+    search_age_year(cursor)
+    
+    
+      
+
+# SELECT *
+# FROM shows
+# WHERE age = '18+'
+# ORDER BY title asc;
+
+# SELECT *
+# FROM shows
+# WHERE age = '18+' AND year >= 2019
+# ORDER BY title asc;
+
 
 # handle the menu selections
 def handle_menu(cursor):
@@ -94,15 +264,23 @@ def handle_menu(cursor):
         except:
             print("\nInvalid input!")
         if option == 1:
-            list_all_shows(cursor)
+            search_show_data(cursor)
         elif option == 2:
-            search_imdb_rating(cursor)
+            search_show(cursor)
         elif option == 3:
+            search_age_limit(cursor)
+        elif option == 4:
+            search_release_year(cursor)
+        elif option == 5:
+            search_age_year(cursor)
+        elif option == 6:
+            search_imdb_rating(cursor)
+        elif option == 7:
             search_tomatoe_rating(cursor)
-        # elif option == 4:
-        #     desired_climate(cursor)
-        # elif option == 5:
-        #     average_lifespan(cursor)
+        elif option == 8:
+            list_all_shows(cursor)
+        elif option == 9:
+            average_rating(cursor)
         else:
             print("\nApplication closed!")
             exit(1)
