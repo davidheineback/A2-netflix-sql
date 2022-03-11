@@ -271,6 +271,7 @@ def choose_streaming_service(cursor):
                 ))
               print('-'*150)
               for show in result:
+                show = [str(x) for x in show]
                 print(print_schema.format(*show))
               break
         raise ValueError()
