@@ -3,7 +3,6 @@ from unicodedata import decimal
 
 R  = '\033[31m' # red
 
-
 def handle_input(choise):
     try:
         return str(input("Enter name of {} and press enter : ".format(choise)))
@@ -280,6 +279,7 @@ def choose_streaming_service(cursor):
       except ValueError:
         print("Input must be an integer between 1 and 4.")
 
+# Easter egg that changes the color of the text in console
 def easter_egg(cursor):
     print(R)
     handle_menu(cursor)
