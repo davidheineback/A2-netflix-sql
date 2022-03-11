@@ -1,6 +1,8 @@
 # handle input from user.
 from unicodedata import decimal
 
+R  = '\033[31m' # red
+
 
 def handle_input(choise):
     try:
@@ -277,8 +279,10 @@ def choose_streaming_service(cursor):
         raise ValueError()
       except ValueError:
         print("Input must be an integer between 1 and 4.")
-    
 
+def easter_egg(cursor):
+    print(R)
+    handle_menu(cursor)
 
 # handle the menu selections
 def handle_menu(cursor):
@@ -309,6 +313,8 @@ def handle_menu(cursor):
             average_rating(cursor)
         elif option == 10:
             choose_streaming_service(cursor)
+        elif option == 99:
+            easter_egg(cursor) 
         else:
             print("\nApplication closed!")
             exit(1)
